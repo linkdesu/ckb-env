@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:latest
+    restart: always
+    ports:
+      - 8432:5432
+    user: 1000:1000
+    environment:
+      POSTGRES_USER: mercury
+      POSTGRES_PASSWORD: mercury
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - /etc/passwd:/etc/passwd:ro
+      - $PROJECT_DIR/postgres/data:/var/lib/postgresql/data/pgdata
+      - $PROJECT_DIR/postgres/initdb:/docker-entrypoint-initdb.d
+      - $PROJECT_DIR/postgres/postgres.conf:/etc/postgresql/postgresql.conf
+    networks:
+      - ckb
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf
+
+networks:
+  ckb:
