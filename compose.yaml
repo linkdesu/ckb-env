@@ -17,7 +17,7 @@ services:
       - $PROJECT_DIR/postgres/initdb:/docker-entrypoint-initdb.d
       - $PROJECT_DIR/postgres/postgres.conf:/etc/postgresql/postgresql.conf
     networks:
-      - ckb
+      - ckb-mainnet
     command: postgres -c config_file=/etc/postgresql/postgresql.conf
 
   ckb-node:
@@ -36,7 +36,7 @@ services:
     volumes:
       - $PROJECT_DIR/ckb-node:/var/lib/ckb
     networks:
-      - ckb
+      - ckb-mainnet
     deploy:
       resources:
         limits:
@@ -56,7 +56,31 @@ services:
       - ckb-node
       - postgres
     networks:
-      - ckb
+      - ckb-mainnet
+    deploy:
+      resources:
+        limits:
+          cpus: 8
+          memory: 200M
+
+  # mercury:
+  #   restart: always
+  #   image: nervos/mercury:v0.2.0-beta.2
+  #   command: ./mercury -c /data/config.toml
+  #   ports:
+  #     - ${CKB_MERCURY_PORT:-8116}:8116
+  #   volumes:
+  #     - $PROJECT_DIR/mercury:/data
+  #   depends_on:
+  #     - ckb-node
+  #     - postgres
+  #   networks:
+  #     - ckb-mainnet
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: 8
+  #         memory: 200M
 
 networks:
-  ckb:
+  ckb-mainnet:
