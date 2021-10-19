@@ -1,1 +1,5 @@
 postgres/data/
+ckb-node/data/
+ckb-indexer/
+.env
+*.log

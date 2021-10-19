@@ -2,11 +2,10 @@ version: '3'
 
 services:
   postgres:
-    container_name: postgres
     image: postgres:latest
     restart: always
     ports:
-      - 8432:5432
+      - ${POSTGRES_PORT:-5432}:5432
     user: 1000:1000
     environment:
       POSTGRES_USER: mercury
@@ -20,6 +19,69 @@ services:
     networks:
       - ckb
     command: postgres -c config_file=/etc/postgresql/postgresql.conf
+
+  ckb-node:
+    image: nervos/ckb:latest
+    restart: always
+    working_dir: /var/lib/ckb
+    entrypoint: /bin/docker-entrypoint.sh
+    command: run
+    ports:
+      - ${CKB_RPC_PORT:-8114}:8114
+      - 8115:8115
+    environment:
+      CKB_NETWORK: $CKB_NETWORK
+      PATH: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+    volumes:
+      - $PROJECT_DIR/ckb-node:/var/lib/ckb
+    networks:
+      - ckb
+    deploy:
+      resources:
+        limits:
+          cpus: 8
+          memory: 500M
+
+  ckb-indexer:
+    image: nervos/ckb-indexer:latest
+    restart: always
+    entrypoint: /bin/ckb-indexer
+    command: ['-c', 'ckb-node:8114', '-s', '/data', '-l', '0.0.0.0:${CKB_INDEXER_PORT:-8116}']
+    ports:
+      - ${CKB_INDEXER_PORT:-8116}:8116
+    environment:
+      RUST_LOG: info
+      PATH: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+    volumes:
+      - $PROJECT_DIR/ckb-indexer:/data
+    depends_on:
+      - ckb-node
+    networks:
+      - ckb
+    deploy:
+      resources:
+        limits:
+          cpus: 8
+          memory: 200M
+
+  # mercury:
+  #   restart: always
+  #   image: nervos/mercury:v0.2.0-beta.2
+  #   command: ./mercury -c /data/config.toml
+  #   ports:
+  #     - ${CKB_MERCURY_PORT:-8116}:8116
+  #   volumes:
+  #     - $PROJECT_DIR/mercury:/data
+  #   depends_on:
+  #     - ckb-node
+  #     - postgres
+  #   networks:
+  #     - ckb
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: 8
+  #         memory: 200M
 
 networks:
   ckb:
