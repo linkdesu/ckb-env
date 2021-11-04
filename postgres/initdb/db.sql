@@ -1,6 +1,3 @@
-CREATE DATABASE mercury_mainnet;
-GRANT ALL PRIVILEGES ON DATABASE mercury_mainnet TO mercury;
-
 CREATE TABLE mercury_block(
     block_hash bytea PRIMARY KEY,
     block_number int NOT NULL,
