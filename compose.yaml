@@ -30,7 +30,7 @@ services:
       - ${CKB_RPC_PORT:-8114}:8114
       - 8115:8115
     environment:
-      CKB_NETWORK: $CKB_NETWORK
+      CKB_CHAIN: $CKB_NETWORK
       PATH: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
     volumes:
       - $PROJECT_DIR/ckb-node:/var/lib/ckb
@@ -64,24 +64,24 @@ services:
           cpus: 8
           memory: 200M
 
-  # mercury:
-  #   restart: always
-  #   image: nervos/mercury:v0.2.0-beta.2
-  #   command: ./mercury -c /data/config.toml
-  #   ports:
-  #     - ${CKB_MERCURY_PORT:-8116}:8116
-  #   volumes:
-  #     - $PROJECT_DIR/mercury:/data
-  #   depends_on:
-  #     - ckb-node
-  #     - postgres
-  #   networks:
-  #     - ckb
-  #   deploy:
-  #     resources:
-  #       limits:
-  #         cpus: 8
-  #         memory: 200M
+  mercury:
+    restart: always
+    image: nervos/mercury:v0.2.0-beta.3
+    command: ./mercury -c /data/config.toml
+    ports:
+      - ${CKB_MERCURY_PORT:-8117}:8116
+    volumes:
+      - $PROJECT_DIR/mercury:/data
+    depends_on:
+      - ckb-node
+      - postgres
+    networks:
+      - ckb
+    deploy:
+      resources:
+        limits:
+          cpus: 8
+          memory: 200M
 
 networks:
   ckb:

@@ -21,15 +21,15 @@ db_type = "postgres"
 db_host = "127.0.0.1"
 db_port = 8432
 db_name = "mercury"
-db_user = "postgres"
-password = "123456"
+db_user = "mercury"
+password = "mercury"
 db_log_level = "WARN"
 
 
 [log_config]
 log_level = "INFO"
 use_split_file = false
-log_path = "./free-space/mainnet/mercury.log"
+log_path = "/data/log"
 
 
 # The network type reference https://github.com/nervosnetwork/ckb-cli/blob/master/ckb-sdk/src/constants.rs
