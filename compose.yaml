@@ -46,7 +46,7 @@ services:
     image: nervos/ckb-indexer:latest
     restart: always
     entrypoint: /bin/ckb-indexer
-    command: ['-c', 'ckb-node:8114', '-s', '/data', '-l', '0.0.0.0:${CKB_INDEXER_PORT:-8116}']
+    command: ['-c', 'http://ckb-node:8114', '-s', '/data', '-l', '0.0.0.0:${CKB_INDEXER_PORT:-8116}']
     ports:
       - ${CKB_INDEXER_PORT:-8116}:8116
     environment:
