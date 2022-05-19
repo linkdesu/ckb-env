@@ -18,13 +18,13 @@ Now, clone this project with `git clone https://github.com/linkdesu/ckb-env.git`
 
 But before you start services, you need basicly 3 step to get configs ready:
 
-> WARNING! DO NOT modify ports in configs, they are also hard-coded in `compose.yaml`, so only modify them in the `.env` file.
+> WARNING! DO NOT modify ports in configs like `ckb-node/*.toml` or `ckb-indexer/*.toml`, they are also hard-coded in `compose.yaml`, so only modify them through the `.env` file.
 
 - Copy and paste `.env.*.example` to `.env` and modify it base on your requirements, you most likely want to modify the `PROJECT_DIR` to indicate where this project directory is on your system.
+- Copy and paste `ckb-node/ckb.*.toml` to `ckb-node/ckb.toml` and `ckb-node/ckb-miner.*.toml` to `ckb-node/ckb-miner.toml` base on your requirements.
 - Config `mercury/config.toml` base on your requirements, you most likely want to modify `network_config.network_type` to indicate mainnet or testnet.
-- Config `ckb.toml` base on your requirements, you most likely want to modify `chain.spec` to indicate mainnet or testnet.
 
-After all that preparation, you may start all services now with run `docker-compose up` or click `Deploy this stack` .
+After all that preparation, you may start all services now with run `docker compose up` or click `Deploy this stack` .
 
 
 ## Service Dependencies
@@ -35,6 +35,7 @@ If you know the references of compose.yaml you will find that:
 - `mercury` is depend on `postgres`.
 - If you do not need `mercury` you will not need `postgres`.
 - You may choose one of `mercury` and `ckb-indexer`, `mercury` is the successor of `ckb-indexer`.
+
 
 ## Data directories
 
@@ -49,14 +50,18 @@ Then if you do not want to sync again and again, remember to protected the follo
 
 ## Other things you should know
 
+### Service ckb Problems
+
+The service ckb will use the user **ckb(1000)** in container, for easier cope with permission problems, the `compose.yaml` force user to be root in container, so if your have special security needs, you need update it accordingly.
+
 ### Redeploy
 
 You may face some failsure while deploying, network failsure, permission denied and so on. When any of these break the depolyment process, you need to clear `./postgres/data` directory, then it will be ok to redeploy as many times as possible until you solved every problems.
 
-### Postgres Problems
+### Service postgres Problems
 
 - Before start the service, if you run Docker with user other than 1000:1000, you will need to create a user named postgres in host, this is caused by [how postgres runs the SQLs in initdb](https://hub.docker.com/_/postgres).
 
 ### Mercury Problems
 
-
+- Because we do not need it in production, it has been lost maintenance for too long, any PR is welcome.

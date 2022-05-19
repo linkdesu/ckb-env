@@ -36,11 +36,6 @@ services:
       - $PROJECT_DIR/ckb-node:/var/lib/ckb
     networks:
       - ckb
-    deploy:
-      resources:
-        limits:
-          cpus: 8
-          memory: 500M
 
   ckb-indexer:
     image: nervos/ckb-indexer:latest
@@ -58,11 +53,6 @@ services:
       - ckb-node
     networks:
       - ckb
-    deploy:
-      resources:
-        limits:
-          cpus: 8
-          memory: 200M
 
   mercury:
     restart: always
@@ -77,11 +67,6 @@ services:
       - postgres
     networks:
       - ckb
-    deploy:
-      resources:
-        limits:
-          cpus: 8
-          memory: 200M
 
 networks:
   ckb:
