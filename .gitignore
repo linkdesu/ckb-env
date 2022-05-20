@@ -1,5 +1,7 @@
 postgres/data/
 ckb-node/data/
+ckb-node/ckb.toml
+ckb-node/ckb-miner.toml
 ckb-indexer/
 .env
 *.log

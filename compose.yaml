@@ -22,7 +22,7 @@ services:
 
   ckb-node:
     image: nervos/ckb:latest
-    user: root
+    # user: root
     restart: always
     working_dir: /var/lib/ckb
     entrypoint: /bin/docker-entrypoint.sh
@@ -41,7 +41,7 @@ services:
   ckb-indexer:
     image: nervos/ckb-indexer:latest
     restart: always
-    user: root
+    # user: root
     entrypoint: /bin/ckb-indexer
     command: ['-c', 'http://ckb-node:8114', '-s', '/data', '-l', '0.0.0.0:8116']
     ports:

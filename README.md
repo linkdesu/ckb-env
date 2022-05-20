@@ -23,6 +23,7 @@ But before you start services, you need basicly 3 step to get configs ready:
 - Copy and paste `.env.*.example` to `.env` and modify it base on your requirements, you most likely want to modify the `PROJECT_DIR` to indicate where this project directory is on your system.
 - Copy and paste `ckb-node/ckb.*.toml` to `ckb-node/ckb.toml` and `ckb-node/ckb-miner.*.toml` to `ckb-node/ckb-miner.toml` base on your requirements.
 - Config `mercury/config.toml` base on your requirements, you most likely want to modify `network_config.network_type` to indicate mainnet or testnet.
+- Confirm the directory permissions by simply run `docker compose up ckb-node`, if this command executed sueccessfully, then everything is OK, otherwise you need to solve the permission issues following [Permission Problems](#permission-problems).
 
 After all that preparation, you may start all services now with run `docker compose up` or click `Deploy this stack` .
 
@@ -50,9 +51,14 @@ Then if you do not want to sync again and again, remember to protected the follo
 
 ## Other things you should know
 
-### Service ckb Problems
+### Permission Problems
 
-The service ckb will use the user **ckb(1000)** in container, for easier cope with permission problems, the `compose.yaml` force user to be root in container, so if your have special security needs, you need update it accordingly.
+The service ckb-node and ckb-indexer will run as the user **ckb(1000:1000)** in container, so when the `permission denied` error occurs, you have two ways to make everything works:
+
+- The first way is run the services as user 1000:1000 which means the id and group of the user is 1000, and ensure the path to the project directory is writable by user(1000:1000), the user's name do not have to be ckb;
+- The second way is run the services as root, in this way you need to uncomment the `# user: root` line in `compose.yaml` ;
+
+The best practice is not to run the container as root, but it is ok to choose any of them.
 
 ### Redeploy
 
