@@ -31,30 +31,18 @@ services:
       - ${CKB_RPC_PORT:-8114}:8114
       - ${CKB_P2P_PORT:-8115}:8115
     environment:
-      CKB_CHAIN: $CKB_NETWORK
+      CKB_CHAIN: ${CKB_NETWORK}
       PATH: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
     volumes:
       - $PROJECT_DIR/ckb-node:/var/lib/ckb
     networks:
       - ckb
-
-  ckb-indexer:
-    image: nervos/ckb-indexer:latest
-    restart: always
-    # user: root
-    entrypoint: /bin/ckb-indexer
-    command: ['-c', 'http://ckb-node:8114', '-s', '/data', '-l', '0.0.0.0:8116']
-    ports:
-      - ${CKB_INDEXER_PORT:-8116}:8116
-    environment:
-      RUST_LOG: info
-      PATH: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-    volumes:
-      - $PROJECT_DIR/ckb-indexer:/data
-    depends_on:
-      - ckb-node
-    networks:
-      - ckb
+    deploy:
+      resources:
+        limits:
+          memory: 3000M
+        reservations:
+          memory: 2000M
 
   mercury:
     image: nervos/mercury:v0.2.0-beta.3

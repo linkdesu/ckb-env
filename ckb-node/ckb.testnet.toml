@@ -22,6 +22,7 @@ dsn = "https://dda4f353e15f4b62800d273a2afe70c2@sentry.nervos.org/4"
 # please leave a way to contact you when we have troubles to reproduce the errors.
 # org_contact = ""
 
+# # **Experimental** Monitor memory changes.
 # [memory_tracker]
 # # Seconds between checking the process, 0 is disable, default is 0.
 # interval = 600
@@ -59,6 +60,8 @@ bootnodes = [
 # whitelist_only = false
 ### Whitelist peers connecting from the given IP addresses
 # whitelist_peers = []
+### Enable `SO_REUSEPORT` feature to reuse port on Linux, not supported on other OS yet
+# reuse_port_on_linux = true
 
 max_peers = 125
 max_outbound_peers = 8
@@ -75,6 +78,12 @@ discovery_local_address = false
 # Ensure that itself can continue to serve as a bootnode node
 bootnode_mode = false
 
+# Supported protocols list, only "Sync" and "Identify" are mandatory, others are optional
+support_protocols = ["Ping", "Discovery", "Identify", "Feeler", "DisconnectMessage", "Sync", "Relay", "Time", "Alert", "LightClient", "Filter"]
+
+# [network.sync.header_map]
+# memory_limit = "600MB"
+
 [rpc]
 # By default RPC only binds to localhost, thus it only allows accessing from the same machine.
 #
@@ -85,8 +94,8 @@ listen_address = "0.0.0.0:8114"
 # Default is 10MiB = 10 * 1024 * 1024
 max_request_body_size = 10485760
 
-# List of API modules: ["Net", "Pool", "Miner", "Chain", "Stats", "Subscription", "Experiment", "Debug"]
-modules = ["Net", "Pool", "Miner", "Chain", "Stats", "Subscription", "Experiment"]
+# List of API modules: ["Net", "Pool", "Miner", "Chain", "Stats", "Subscription", "Experiment", "Debug", "Indexer"]
+modules = ["Net", "Pool", "Miner", "Chain", "Stats", "Subscription", "Experiment", "Indexer"]
 
 # By default RPC only binds to HTTP service, you can bind it to TCP and WebSocket.
 # tcp_listen_address = "127.0.0.1:18114"
@@ -99,9 +108,6 @@ enable_deprecated_rpc = false
 [tx_pool]
 max_mem_size = 20_000_000 # 20mb
 max_cycles = 200_000_000_000
-max_verify_cache_size = 100_000
-max_conflict_cache_size = 1_000
-max_committed_txs_hash_cache_size = 100_000
 min_fee_rate = 1_000 # shannons/KB
 max_tx_verify_cycles = 70_000_000
 max_ancestors_count = 25
@@ -112,7 +118,6 @@ cell_data_cache_size       = 128
 block_proposals_cache_size = 30
 block_tx_hashes_cache_size = 30
 block_uncles_cache_size    = 30
-cellbase_cache_size        = 30
 
 # [notifier]
 # # Execute command when the new tip block changes, first arg is block hash.
@@ -158,3 +163,15 @@ cellbase_cache_size        = 30
 # args = "ckb-cli util blake2b --prefix-160 <compressed-pubkey>"
 # hash_type = "type"
 # message = "A 0x-prefixed hex string"
+# #
+# # CKB will prepend the binary version to message, to identify the block miner client. (default true, false to disable it)
+# use_binary_version_as_message_prefix = true
+# #
+# # Block assembler will notify new block template through http post to specified endpoints when update
+# notify = ["http://127.0.0.1:8888"]
+# # Or you may want use more flexible scripts, block template as arg.
+# notify_scripts = ["{cmd} {blocktemplate}"]
+
+[indexer_v2]
+# Indexing the pending txs in the ckb tx-pool
+index_tx_pool = true

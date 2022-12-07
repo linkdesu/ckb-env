@@ -1,34 +1,34 @@
-center_id = 0
+sync_mode = true
 
-machine_id = 0
-
-indexer_mode = true
-
-need_sync = true
+allow_parallel_sync  = true
 
 rpc_thread_num = 3
 
 flush_tx_pool_cache_interval = 300
-
 # Fill cellbase maturity in the same as the ckb genesis block.
 cellbase_maturity = 4
-
-cheque_timeout = 6
-
+cheque_since = 6
+pool_cache_size = 100
+is_pprof_enabled = true
 [db_config]
-max_connections = 1000
+center_id = 0
+machine_id = 0
+max_connections = 100
+min_connections = 0
+connect_timeout = 60
+max_lifetime = 1800
+idle_timeout = 30
 db_type = "postgres"
 db_host = "127.0.0.1"
 db_port = 8432
 db_name = "mercury"
-db_user = "mercury"
-password = "mercury"
-db_log_level = "DEBUG"
+db_user = "postgres"
+password = "123456"
 
 
 [log_config]
 log_level = "INFO"
-use_split_file = false
+auto_split_log_file = true
 log_path = "/data/log"
 
 
@@ -41,7 +41,7 @@ listen_uri = "127.0.0.1:8116"
 
 [sync_config]
 sync_block_batch_size = 1000
-max_task_count = 30
+max_task_number = 4     # same as the number of cpu cores in the Recommended Hardware section of the README
 
 
 [[builtin_scripts]]
@@ -138,6 +138,25 @@ cell_dep = '''
     "out_point": {
         "index": "0x2",
         "tx_hash": "0x8f8c79eb6671709633fe6a46de93c0fedc9c1b8a6527a18d3983879542635c9f"
+    }
+}
+'''
+
+[[builtin_scripts]]
+script_name = "pw_lock"
+script = '''
+{
+    "args": "0x",
+    "code_hash": "0x58c5f491aba6d61678b7cf7edf4910b1f5e00ec0cde2f42e0abb4fd9aff25a63",
+    "hash_type": "type"
+}
+'''
+cell_dep = '''
+{
+    "dep_type": "code",
+    "out_point": {
+        "index": "0x0",
+        "tx_hash": "0x57a62003daeab9d54aa29b944fc3b451213a5ebdf2e232216a3cfed0dde61b38"
     }
 }
 '''
