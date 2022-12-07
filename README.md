@@ -1,9 +1,10 @@
 # ckb-env
 
+> ⚠️ Mercury is currently not supported. ⚠️
+
 This is a project for establishing an all-in-one ckb environment with docker-compose. It includes the following components:
 
 - ckb
-- ckb-indexer
 - ckb-mercury
 - postgres
 
@@ -35,7 +36,6 @@ If you know the references of compose.yaml you will find that:
 - `ckb-node` is the core service, nothing can run without it.
 - `mercury` is depend on `postgres`.
 - If you do not need `mercury` you will not need `postgres`.
-- You may choose one of `mercury` and `ckb-indexer`, `mercury` is the successor of `ckb-indexer`.
 
 
 ## Data directories
@@ -44,7 +44,6 @@ After start all services you may need to sync everything from ckb network in abo
 
 Then if you do not want to sync again and again, remember to protected the following directory carefully:
 
-- `./ckb-indexer`, it stores the rocksdb of ckb-indexer service.
 - `./ckb-node/data`, it store the rocksdb of ckb-node service.
 - `./postgres/data`, it store the postgres database which required by mercury service.
 
@@ -53,7 +52,7 @@ Then if you do not want to sync again and again, remember to protected the follo
 
 ### Permission Problems
 
-The service ckb-node and ckb-indexer will run as the user **ckb(1000:1000)** in container, so when the `permission denied` error occurs, you have two ways to make everything works:
+The service ckb-node will run as the user **ckb(1000:1000)** in container, so when the `permission denied` error occurs, you have two ways to make everything works:
 
 - The first way is run the services as user 1000:1000 which means the id and group of the user is 1000, and ensure the path to the project directory is writable by user(1000:1000), the user's name do not have to be ckb;
 - The second way is run the services as root, in this way you need to uncomment the `# user: root` line in `compose.yaml` ;
