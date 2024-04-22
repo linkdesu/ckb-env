@@ -30,6 +30,7 @@ services:
     ports:
       - ${CKB_RPC_PORT:-8114}:8114
       - ${CKB_P2P_PORT:-8115}:8115
+      - ${CKB_WS_PORT:-28114}:28114
     environment:
       CKB_CHAIN: ${CKB_NETWORK}
       PATH: "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
