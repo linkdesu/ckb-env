@@ -28,11 +28,11 @@ dsn = "https://dda4f353e15f4b62800d273a2afe70c2@sentry.nervos.org/4"
 # interval = 600
 
 [db]
-# The capacity of RocksDB cache, which caches uncompressed data blocks, indexes and filters, default is 128MB.
-# Rocksdb will automatically create and use an 8MB internal cache if you set this value to 0.
+# The capacity of RocksDB cache, which caches uncompressed data blocks, indexes and filters, default is 256MB.
+# Rocksdb will automatically create and use an 32MB internal cache for each column family by default if you set this value to 0.
 # To turning off cache, you need to set this value to 0 and set `no_block_cache = true` in the options_file,
 # however, we strongly discourage this setting, it may lead to severe performance degradation.
-cache_size = 134217728
+cache_size = 268435456
 
 # Provide an options file to tune RocksDB for your workload and your system configuration.
 # More details can be found in [the official tuning guide](https://github.com/facebook/rocksdb/wiki/RocksDB-Tuning-Guide).
@@ -46,14 +46,30 @@ listen_addresses = ["/ip4/0.0.0.0/tcp/8115"]
 # Node connects to nodes listed here to discovery other peers when there's no local stored peers.
 # When chain.spec is changed, this usually should also be changed to the bootnodes in the new chain.
 bootnodes = [
-  # Hangzhou, Asia
-  "/ip4/47.111.169.36/tcp/8111/p2p/QmNQ4jky6uVqLDrPU7snqxARuNGWNLgSrTnssbRuy3ij2W",
   # Ohio, North America
   "/ip4/18.217.146.65/tcp/8111/p2p/QmT6DFfm18wtbJz3y4aPNn3ac86N4d4p4xtfQRRPf73frC",
   # Singapore, Asia
   "/ip4/18.136.60.221/tcp/8111/p2p/QmTt6HeNakL8Fpmevrhdna7J4NzEMf9pLchf1CXtmtSrwb",
   # London, Europe
-  "/ip4/35.176.207.239/tcp/8111/p2p/QmSJTsMsMGBjzv1oBNwQU36VhQRxc2WQpFoRu1ZifYKrjZ"
+  "/ip4/35.176.207.239/tcp/8111/p2p/QmSJTsMsMGBjzv1oBNwQU36VhQRxc2WQpFoRu1ZifYKrjZ",
+  # Singapore, Asia
+  "/ip4/13.228.149.113/tcp/8111/p2p/QmQoTR39rBkpZVgLApDGDoFnJ2YDBS9hYeiib1Z6aoAdEf",
+  # Bahrain, Asia
+  "/ip4/157.241.73.87/tcp/8111/p2p/QmSPkAyXqsWpRiS7HpHLTProVdhQWLKFHCXbRjaLpJj7ZL",
+  # Japan, Asia
+  "/ip4/4.241.132.26/tcp/8111/p2p/QmX5D6aJiAQ5Fxn4BfVqSn6zrgyuQM1oXVC9yvmzLuHXnx",
+  # Korea, Asia
+  "/ip4/52.147.120.180/tcp/8111/p2p/QmPcJY2gZLUm66szYA9QaG1P3rzwseWCMgbj6AyNCyW4G2",
+  # Hong Kong, Asia
+  "/ip4/18.167.196.121/tcp/8111/p2p/QmQMjFrNGaphzfHin3mbYybbJcFMDUihKAcknquYvm9J3W",
+  # Oregon, North America
+  "/ip4/34.216.103.183/tcp/8111/p2p/Qmd41MaByDprkC5gP1XBKgamZ9DTLNk37zbPgwtiWCzRV6",
+  # Canada, North America
+  "/ip4/3.98.152.180/tcp/8111/p2p/QmWVuW5KquiWDSqgMJRFW1xRtVqkYJrWz6S9NNk6fFn3wh",
+  # Frankfurt, Europe
+  "/ip4/18.192.147.65/tcp/8111/p2p/QmWcEhsMNRcfJit62EbKgzpgtAJZX1G3Ur4shXjcvLsYDb",
+  # Sydney, Oceania
+  "/ip4/13.236.13.195/tcp/8111/p2p/QmfUTZxsse7rFJTJfoUv8bbStoDLETxst5nJEpJozNuAnH"
 ]
 
 ### Whitelist-only mode
@@ -82,7 +98,7 @@ bootnode_mode = false
 support_protocols = ["Ping", "Discovery", "Identify", "Feeler", "DisconnectMessage", "Sync", "Relay", "Time", "Alert", "LightClient", "Filter"]
 
 # [network.sync.header_map]
-# memory_limit = "600MB"
+# memory_limit = "256MB"
 
 [rpc]
 # By default RPC only binds to localhost, thus it only allows accessing from the same machine.
@@ -106,9 +122,10 @@ reject_ill_transactions = true
 enable_deprecated_rpc = false
 
 [tx_pool]
-max_mem_size = 20_000_000 # 20mb
-max_cycles = 200_000_000_000
-min_fee_rate = 1_000 # shannons/KB
+max_tx_pool_size = 180_000_000 # 180mb
+min_fee_rate = 1_000 # Here fee_rate are calculated directly using size in units of shannons/KB
+# min_rbf_rate > min_fee_rate means RBF is enabled
+min_rbf_rate = 1_500 # Here fee_rate are calculated directly using size in units of shannons/KB
 max_tx_verify_cycles = 70_000_000
 max_ancestors_count = 25
 
@@ -171,7 +188,26 @@ block_uncles_cache_size    = 30
 # notify = ["http://127.0.0.1:8888"]
 # # Or you may want use more flexible scripts, block template as arg.
 # notify_scripts = ["{cmd} {blocktemplate}"]
-
-[indexer_v2]
-# Indexing the pending txs in the ckb tx-pool
-index_tx_pool = true
+#
+# # CKB built-in indexer/rich-indexer settings.
+# # Utilize the `ckb reset-data --indexer` and `ckb reset-data --rich-indexer` subcommands to efficiently clean existing indexes.
+# [indexer_v2]
+# # Indexing the pending txs in the ckb tx-pool
+# index_tx_pool = false
+# # Customize block filtering rules to index only retained blocks
+# block_filter = "block.header.number.to_uint() >= \"0x0\".to_uint()"
+# # Customize cell filtering rules to index only retained cells
+# cell_filter = "let script = output.type;script!=() && script.code_hash == \"0x00000000000000000000000000000000000000000000000000545950455f4944\""
+# # The initial tip can be set higher than the current indexer tip as the starting height for indexing.
+# init_tip_hash = "0x8fbd0ec887159d2814cee475911600e3589849670f5ee1ed9798b38fdeef4e44"
+#
+# # CKB rich-indexer has its unique configuration.
+# [indexer_v2.rich_indexer]
+# # By default, it uses an embedded SQLite database.
+# # Alternatively, you can set up a PostgreSQL database service and provide the connection parameters.
+# db_type = "postgres"
+# db_name = "ckb-rich-indexer"
+# db_host = "127.0.0.1"
+# db_port = 5432
+# db_user = "postgres"
+# db_password = "123456"

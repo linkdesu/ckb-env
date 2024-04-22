@@ -2,6 +2,7 @@ postgres/data/
 ckb-node/data/
 ckb-node/ckb.toml
 ckb-node/ckb-miner.toml
+ckb-node/core.*
 ckb-indexer/
 .env
 *.log
